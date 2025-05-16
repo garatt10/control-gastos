@@ -51,10 +51,30 @@
                 <button type="submit" class="btn btn-primary" id="submitBtn">Guardar Registro</button>
             </form>
             <div id="alert" class="alert d-none"></div>
+            <div id="tablaRegistrosContainer" class="mt-4">
+                <h2 class="text-center mb-3" style="font-size: 1.3rem;">Registros recientes</h2>
+                <div class="table-responsive">
+                    <table class="table table-bordered text-center align-middle" id="tablaRegistros" style="max-width: 500px; margin: 0 auto;">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Monto</th>
+                                <th>Motivo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Aquí se agregarán los registros -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
+        const tablaRegistros = document.querySelector('#tablaRegistros tbody');
+        let registros = [];
+
         document.getElementById('compraForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -95,6 +115,10 @@
 
                 showAlert('Registro guardado correctamente', 'success');
                 document.getElementById('compraForm').reset();
+
+                // Agregar registro a la tabla local
+                registros.unshift(registro); // lo agrega al principio
+                renderTabla();
             } catch (error) {
                 console.error('Error:', error);
                 showAlert('Hubo un error al guardar el registro', 'danger');
@@ -103,6 +127,19 @@
                 submitBtn.innerHTML = 'Guardar Registro';
             }
         });
+
+        function renderTabla() {
+            tablaRegistros.innerHTML = '';
+            registros.slice(0, 10).forEach(reg => {
+                const tr = document.createElement('tr');
+                reg.forEach(dato => {
+                    const td = document.createElement('td');
+                    td.textContent = dato;
+                    tr.appendChild(td);
+                });
+                tablaRegistros.appendChild(tr);
+            });
+        }
 
         function showAlert(message, type) {
             const alert = document.getElementById('alert');
